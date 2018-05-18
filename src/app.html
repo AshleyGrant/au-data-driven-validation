@@ -1,0 +1,28 @@
+<template>
+  <h1>Demo</h1>
+
+  <div>
+    <input type="text" value.bind="model.simpleProp & validate" />
+  </div>
+  <div>
+    <input type="text" value.bind="model.myProp.nestedProp.deepProp & validate" />
+  </div>
+  <div>
+    <input type="text" value.bind="model.myProp.passwords.password & validate" />
+  </div>
+  <div>
+    <input type="text" value.bind="model.myProp.passwords.confirmPassword & validate" />
+  </div>
+
+  <button click.trigger="validate()">Validate!</button>
+  <button click.trigger="reset()">Reset!</button>
+
+  <div if.bind="validationController.errors.length > 0">
+    Errors:
+    <ul>
+      <li repeat.for="error of validationController.errors">
+        ${error}
+      </li>
+    </ul>
+  </div>
+</template>
