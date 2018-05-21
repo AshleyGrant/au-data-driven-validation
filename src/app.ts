@@ -1,9 +1,11 @@
-import { NewInstance, inject } from 'aurelia-framework';
+import { NewInstance, inject, bindable } from 'aurelia-framework';
 import { ValidationRules, ValidationController } from 'aurelia-validation';
+import { PageInfo } from 'models';
+
+
 
 @inject(NewInstance.of(ValidationController))
 export class App {
-  offFuncs: (() => void)[] = [];
 
   model = {
     name: 'hereiam'
@@ -15,7 +17,7 @@ export class App {
     // }
   };
 
-  pageInfo = {
+  pageInfo : PageInfo = {
     customValidation: {
       rules: [
         {
@@ -74,10 +76,10 @@ export class App {
     ]
   };
 
-  constructor(private validationController: ValidationController) { }
+  constructor(private validationController: ValidationController) { (this.validationController as any).foo = 'lalalala' }
 
   bind() {
-    this.buildValidation();
+    // this.buildValidation();
   }
 
   resetValidation() {
@@ -90,89 +92,88 @@ export class App {
     console.log(this.validationController);
   }
 
-  buildValidation() {
-    if (this.pageInfo.customValidation && this.pageInfo.customValidation.rules) {
-      this.pageInfo.customValidation.rules.map(({ name, func, message, config }) => {
-        ValidationRules.customRule(
-          name,
-          func,
-          message,
-          config
-        )
-      });
-    }
+  // buildValidation() {
+  //   if (this.offFuncs.length) {
+  //     this.offFuncs.map(f => f());
+  //     this.offFuncs = [];
+  //   }
 
-    const mappedFields = this.pageInfo.fields
-      .sort((f1, f2) => {
-        return f1.field.split('.').length - f2.field.split('.').length;
-      })
-      .map(f => {
-        const props = f.field.split('.');
-        const propName = props.pop();
-        return {
-          parent: props.join('.'),
-          propName,
-          field: f
-        };
-      }).reduce((map, curr) => {
-        const fields = map.get(curr.parent) || [];
-        fields.push({
-          field: curr.field,
-          propName: curr.propName
-        });
-        map.set(curr.parent, fields);
-        return map;
-      }, new Map<string, any[]>());
+  //   if (this.pageInfo.customValidation && this.pageInfo.customValidation.rules) {
+  //     this.pageInfo.customValidation.rules.map(({ name, func, message, config }) => {
+  //       ValidationRules.customRule(
+  //         name,
+  //         func,
+  //         message,
+  //         config
+  //       )
+  //     });
+  //   }
 
-    console.log('mappedFields', mappedFields);
+  //   const mappedFields = this.pageInfo.fields
+  //     .sort((f1, f2) => {
+  //       return f1.field.split('.').length - f2.field.split('.').length;
+  //     })
+  //     .map(f => {
+  //       const props = f.field.split('.');
+  //       const propName = props.pop();
+  //       return {
+  //         parent: props.join('.'),
+  //         propName,
+  //         field: f
+  //       };
+  //     }).reduce((map, curr) => {
+  //       const fields = map.get(curr.parent) || [];
+  //       fields.push({
+  //         field: curr.field,
+  //         propName: curr.propName
+  //       });
+  //       map.set(curr.parent, fields);
+  //       return map;
+  //     }, new Map<string, any[]>());
 
-    for (let [parent, fields] of mappedFields) {
-      console.log('parent', parent);
-      let parentObject = this.model;
+  //   for (let [parent, fields] of mappedFields) {
+  //     let parentObject = this.model;
 
-      if (parent.length) {
-        const props = parent.split('.');
-        props.map(p => {
-          if (parentObject[p] === undefined) {
-            parentObject[p] = {};
-          }
-          parentObject = parentObject[p]
-        });
-      }
+  //     if (parent.length) {
+  //       const props = parent.split('.');
+  //       props.map(p => {
+  //         if (parentObject[p] === undefined) {
+  //           parentObject[p] = {};
+  //         }
+  //         parentObject = parentObject[p]
+  //       });
+  //     }
 
-      console.log('parentObject', parentObject);
+  //     let rules: any = ValidationRules;
 
-      let rules: any = ValidationRules;
+  //     fields.map(({ field: { label, validation: validationInfo }, propName }) => {
+  //       if (parentObject[propName] === undefined) {
+  //         parentObject[propName] = null;
+  //       }
 
-      fields.map(({ field: { label, validation: validationInfo }, propName }) => {
-        if (parentObject[propName] === undefined) {
-          parentObject[propName] = null;
-        }
+  //       rules = rules.ensure(propName);
 
-        rules = rules.ensure(propName);
+  //       if (label) {
+  //         rules = rules.displayName(label);
+  //       }
 
-        if (label) {
-          rules.displayName(label);
-        }
+  //       Object.getOwnPropertyNames(validationInfo).map(prop => {
+  //         if (prop === 'customRules') {
+  //           validationInfo.customRules.map(({ name, config }) => {
+  //             rules = rules.satisfiesRule(name, ...config(this.model));
+  //           });
+  //         } else if (typeof validationInfo[prop] !== 'object') {
+  //           rules = rules[prop](validationInfo[prop]);
+  //         }
+  //       });
+  //     });
+  //     rules.on(parentObject);
 
-        Object.getOwnPropertyNames(validationInfo).map(prop => {
-          if (prop === 'customRules') {
-            validationInfo.customRules.map(({ name, config }) => {
-              rules = rules.satisfiesRule(name, ...config(this.model));
-            });
-          } else if (typeof validationInfo[prop] !== 'object') {
-            rules = rules[prop](validationInfo[prop]);
-          }
-        });
-      });
-      rules.on(parentObject);
-
-      this.offFuncs.push(() => ValidationRules.off(parentObject));
-    }
-
-    console.log(this.model);
-  }
+  //     this.offFuncs.push(() => ValidationRules.off(parentObject));
+  //   }
+  // }
 }
+
 
 
 export class NumberValueConverter {
