@@ -1,0 +1,9 @@
+<template>
+    <div>
+      <label>${def.label}
+          <textarea value.bind="model & dynamicExpression:def.field & validate"
+            readonly.bind="def.readonly"
+          ></textarea> 
+      </label>
+    </div>
+</template>

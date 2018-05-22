@@ -1,11 +1,11 @@
 import { autoinject } from 'aurelia-dependency-injection';
 import { ValidationController, ValidationRules } from "aurelia-validation";
-import { PageInfo } from "models";
 import { bindable } from "aurelia-framework";
+import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 
 @autoinject()
 export class DataDrivenValidationCustomAttribute {
-  @bindable validationConfig: PageInfo;
+  @bindable validationConfig: PageDefinition;
   @bindable model: any;
 
   offFuncs: (() => void)[] = [];
@@ -35,7 +35,7 @@ export class DataDrivenValidationCustomAttribute {
         });
       }
 
-      const mappedFields = this.validationConfig.fields
+      const mappedFields = this.validationConfig.fieldDefinitions
         .sort((f1, f2) => {
           return f1.field.split('.').length - f2.field.split('.').length;
         })
@@ -77,21 +77,31 @@ export class DataDrivenValidationCustomAttribute {
             parentObject[propName] = null;
           }
 
-          rules = rules.ensure(propName);
+          if (validationInfo) {
+            rules = rules.ensure(propName);
 
-          if (label) {
-            rules = rules.displayName(label);
-          }
-
-          Object.getOwnPropertyNames(validationInfo).map(prop => {
-            if (prop === 'customRules') {
-              validationInfo.customRules.map(({ name, config }) => {
-                rules = rules.satisfiesRule(name, ...config(this.model));
-              });
-            } else if (typeof validationInfo[prop] !== 'object') {
-              rules = rules[prop](validationInfo[prop]);
+            if (label) {
+              rules = rules.displayName(label);
             }
-          });
+
+            Object.getOwnPropertyNames(validationInfo).map(prop => {
+              switch (prop) {
+                case 'customRules':
+                  validationInfo.customRules.map(({ name, configValues }) => {
+                    rules = rules.satisfiesRule(name, this.model, ...configValues);
+                  });
+                  break;
+                case 'message':
+                  rules = rules.withMessage(validationInfo[prop]);
+                  break;
+                default:
+                  if (typeof validationInfo[prop] !== 'object') {
+                    rules = rules[prop](validationInfo[prop]);
+                  }
+                  break;
+              }
+            });
+          }
         });
         rules.on(parentObject);
 

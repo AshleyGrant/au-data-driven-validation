@@ -1,0 +1,10 @@
+<template>
+  <div>
+    <label>${def.label}
+      <input type="text" 
+        value.bind="model & dynamicExpression:def.field & validate" 
+        placeholder.one-time="def.placeholder || ''"
+      />
+    </label>
+  </div>
+</template>

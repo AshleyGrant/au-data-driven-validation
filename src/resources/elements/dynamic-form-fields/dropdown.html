@@ -1,0 +1,10 @@
+<template>
+    <div>
+      <label>
+        ${def.label}
+          <select value.bind="model & dynamicExpression:def.field & validate">
+            <option repeat.for="option of def.values" model.bind="option.value">${option.text}</option>
+          </select> 
+      </label>    
+    </div>
+</template>

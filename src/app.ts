@@ -1,74 +1,63 @@
+import { matchesProperty } from './resources/custom-validation-rules/matches-property';
 import { NewInstance, inject, bindable } from 'aurelia-framework';
 import { ValidationRules, ValidationController } from 'aurelia-validation';
-import { PageInfo } from 'models';
+import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 
 
 
 @inject(NewInstance.of(ValidationController))
 export class App {
 
-  model = {
-    name: 'hereiam'
-    // myProp: {
-    //   nestedProp: {
-    //     deepProp: 4
-    //   },
+  model = { };
 
-    // }
-  };
-
-  pageInfo : PageInfo = {
+  pageInfo : PageDefinition = {
+    title: 'Avenger Application',
     customValidation: {
       rules: [
-        {
-          name: 'matchesProperty',
-          func: (value, obj, model, otherPropertyName) => {
-            const otherProp = getDeeplyNestedProperty(model, otherPropertyName);
-
-            return value === null
-              || value === undefined
-              || value === ''
-              || otherProp === null
-              || otherProp === undefined
-              || otherProp === ''
-              || value === otherProp
-          },
-          message: '${$displayName} must match ${$getDisplayName($config.otherPropertyDisplayName || $config.otherPropertyName)}',
-          config: (model, otherPropertyName, otherPropertyDisplayName) => ({ model, otherPropertyName, otherPropertyDisplayName })
-        }
+        matchesProperty
       ]
     },
-    fields: [
+    fieldDefinitions: [
       {
-        field: 'simpleProp',
+        field: 'names.givenName',
+        label: 'Given Name',
+        type: 'text',
         validation: {
           required: true,
-          minLength: 3
+          minLength: 3,
+          message: '${$displayName}\'s gotta be at least three characters long, yo!'
         }
       },
       {
-        field: 'myProp.passwords.password',
+        field: 'names.superHeroName',
+        label: 'Super Hero Name',
+        type: 'text',
         validation: {
           minLength: 3,
-          maxLength: 6,
+          maxLength: 15,
           customRules: [
             {
               name: 'matchesProperty',
-              config: model => [model, 'myProp.passwords.confirmPassword', 'Confirm Password']
+              configValues: ['names.confirmSuperHeroName', 'Confirm Hero Name']
             }
           ]
         }
       },
       {
-        field: 'myProp.passwords.confirmPassword',
+        field: 'names.confirmSuperHeroName',
+        label: 'Confirm Super Hero Name',
+        type: 'text',
         validation: {
           minLength: 3,
-          maxLength: 6
+          maxLength: 15
         }
       },
       {
-        field: 'myProp.nestedProp.deepProp',
+        field: 'powers.firstPower',
+        type: 'text',
+        label: 'What\'s your power?',
         validation: {
+          displayName: 'First Power',
           minLength: 5,
           maxLength: 10
         }
@@ -91,111 +80,4 @@ export class App {
     console.log(this.model);
     console.log(this.validationController);
   }
-
-  // buildValidation() {
-  //   if (this.offFuncs.length) {
-  //     this.offFuncs.map(f => f());
-  //     this.offFuncs = [];
-  //   }
-
-  //   if (this.pageInfo.customValidation && this.pageInfo.customValidation.rules) {
-  //     this.pageInfo.customValidation.rules.map(({ name, func, message, config }) => {
-  //       ValidationRules.customRule(
-  //         name,
-  //         func,
-  //         message,
-  //         config
-  //       )
-  //     });
-  //   }
-
-  //   const mappedFields = this.pageInfo.fields
-  //     .sort((f1, f2) => {
-  //       return f1.field.split('.').length - f2.field.split('.').length;
-  //     })
-  //     .map(f => {
-  //       const props = f.field.split('.');
-  //       const propName = props.pop();
-  //       return {
-  //         parent: props.join('.'),
-  //         propName,
-  //         field: f
-  //       };
-  //     }).reduce((map, curr) => {
-  //       const fields = map.get(curr.parent) || [];
-  //       fields.push({
-  //         field: curr.field,
-  //         propName: curr.propName
-  //       });
-  //       map.set(curr.parent, fields);
-  //       return map;
-  //     }, new Map<string, any[]>());
-
-  //   for (let [parent, fields] of mappedFields) {
-  //     let parentObject = this.model;
-
-  //     if (parent.length) {
-  //       const props = parent.split('.');
-  //       props.map(p => {
-  //         if (parentObject[p] === undefined) {
-  //           parentObject[p] = {};
-  //         }
-  //         parentObject = parentObject[p]
-  //       });
-  //     }
-
-  //     let rules: any = ValidationRules;
-
-  //     fields.map(({ field: { label, validation: validationInfo }, propName }) => {
-  //       if (parentObject[propName] === undefined) {
-  //         parentObject[propName] = null;
-  //       }
-
-  //       rules = rules.ensure(propName);
-
-  //       if (label) {
-  //         rules = rules.displayName(label);
-  //       }
-
-  //       Object.getOwnPropertyNames(validationInfo).map(prop => {
-  //         if (prop === 'customRules') {
-  //           validationInfo.customRules.map(({ name, config }) => {
-  //             rules = rules.satisfiesRule(name, ...config(this.model));
-  //           });
-  //         } else if (typeof validationInfo[prop] !== 'object') {
-  //           rules = rules[prop](validationInfo[prop]);
-  //         }
-  //       });
-  //     });
-  //     rules.on(parentObject);
-
-  //     this.offFuncs.push(() => ValidationRules.off(parentObject));
-  //   }
-  // }
-}
-
-
-
-export class NumberValueConverter {
-  fromView(value) {
-    try {
-      return parseInt(value);
-    } catch {
-      return 0;
-    }
-  }
-}
-
-function getDeeplyNestedProperty(obj, property) {
-  if (property) {
-    const props = property.split('.');
-    props.map(p => {
-      if (obj[p] === undefined) {
-        obj[p] = {};
-      }
-      obj = obj[p]
-    });
-  }
-
-  return obj;
 }
