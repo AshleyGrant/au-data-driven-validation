@@ -1,0 +1,15 @@
+{
+    "avengerApplication": "Avenger Application",
+    "givenName": "Given Name",
+    "givenNamePlaceholder": "Thor",
+    "heroName": "Heroic Name",
+    "confirmHeroMatchMessage": "Confirm Hero Name",
+    "confirmHeroName": "Confirm Heroic Name",
+    "whatsPower": "What's your power?",
+    "firstPower": "First Power",
+    "phoneNumbers": "Phone Numbers",
+    "phoneNumber": "Phone Number",
+    "errorMessages": {
+      "matchesProperty": "${$displayName} must match ${$getDisplayName($config.otherPropertyDisplayName || $config.otherPropertyName)}"
+    }
+}

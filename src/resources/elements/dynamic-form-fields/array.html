@@ -1,0 +1,30 @@
+<template>
+  <input type="hidden" ref="helper" model.bind="model & dynamicExpression:def.field" starter-obj.bind="{}" />
+  <div>
+    <label>
+      ${def.label & t}: ${helper.model.length}
+
+      <button click.delegate="addEmptyItem(helper.model)">Add</button>
+
+      <table>
+        <!-- 
+          That weird if.bind is there to deal with a strange bug in the 
+          repeater where it renders an extra item for unknown reasons. There's 
+          an open bug for it here: https://github.com/aurelia/framework/issues/830
+            -->
+        <tr repeat.for="childObj of helper.model" 
+            if.bind="childObj" 
+            data-driven-validation="validation-config.bind: def; model.bind: childObj"
+            validation-errors.bind="itemErrors">
+          <td>${$index}</td>
+          <td repeat.for="childDef of def.arrayItemFieldDefinitions">
+            <compose model.bind="{ childObj, childDef }" view-model="./array-fields/${childDef.type}"></compose>
+          </td>
+          <td>
+            <button click.delegate="log(itemErrors)" disabled.bind="itemErrors.length !== 0">Update</button>
+          </td>
+        </tr>
+      </table>
+    </label>
+  </div>
+</template>

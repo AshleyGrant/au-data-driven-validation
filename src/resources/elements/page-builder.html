@@ -1,8 +1,8 @@
 <template>
-  <h1>${definition.title}</h1>
+  <h1 t.bind="definition.title"></h1>
   <form data-driven-validation="validation-config.bind: definition; model.bind: model">
-    <div repeat.for="def of definition.fieldDefinitions">
-      <compose if.bind="!def.childFieldDefinitions" view="./dynamic-form-fields/${def.type}.html"></compose>
+    <div repeat.for="def of definition.fieldDefinitions"> 
+      <compose view="./dynamic-form-fields/${def.type}.html"></compose>
     </div>
   </form>
 
@@ -11,8 +11,8 @@
   <div if.bind="validationController.errors.length > 0">
     Errors:
     <ul>
-      <li repeat.for="error of validationController.errors">
-        ${error}
+      <li repeat.for="error of errors">
+        ${$index} ${error}
       </li>
     </ul>
   </div>

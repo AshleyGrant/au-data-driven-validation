@@ -1,3 +1,4 @@
+import { FieldDefinition } from './../ts-defs/dynamic-ui.d';
 import { autoinject } from 'aurelia-dependency-injection';
 import { ValidationController, ValidationRules } from "aurelia-validation";
 import { bindable } from "aurelia-framework";
@@ -5,7 +6,7 @@ import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 
 @autoinject()
 export class DataDrivenValidationCustomAttribute {
-  @bindable validationConfig: PageDefinition;
+  @bindable validationConfig: PageDefinition | FieldDefinition;
   @bindable model: any;
 
   offFuncs: (() => void)[] = [];
@@ -23,19 +24,33 @@ export class DataDrivenValidationCustomAttribute {
   buildValidation() {
     this.turnOffValidation();
 
-    if (this.validationConfig) {
-      if (this.validationConfig.customValidation && this.validationConfig.customValidation.rules) {
-        this.validationConfig.customValidation.rules.map(({ name, func, message, config }) => {
-          ValidationRules.customRule(
-            name,
-            func,
-            message,
-            config
-          )
-        });
-      }
+    if (!this.validationConfig) {
+      console.log('this.validationConfig', this.validationConfig);
+      console.log('this.model', this.model);
+      throw new Error('No validation config bound in.');
+    }
 
-      const mappedFields = this.validationConfig.fieldDefinitions
+    let pageDefinition: PageDefinition = {} as PageDefinition;
+
+    if ((this.validationConfig as PageDefinition).fieldDefinitions) {
+      pageDefinition = this.validationConfig as PageDefinition;
+    }
+
+    if (pageDefinition.customValidation && pageDefinition.customValidation.rules) {
+      pageDefinition.customValidation.rules.map(({ name, func, message, config }) => {
+        ValidationRules.customRule(
+          name,
+          func,
+          message,
+          config
+        )
+      });
+    }
+
+    const fields = pageDefinition.fieldDefinitions || (this.validationConfig as FieldDefinition).arrayItemFieldDefinitions;
+
+    if (fields && fields.length > 0) {
+      const mappedFields = fields
         .sort((f1, f2) => {
           return f1.field.split('.').length - f2.field.split('.').length;
         })
@@ -72,9 +87,13 @@ export class DataDrivenValidationCustomAttribute {
 
         let rules: any = ValidationRules;
 
-        fields.map(({ field: { label, validation: validationInfo }, propName }) => {
+        fields.map(({ field: { label, type, validation: validationInfo }, propName }) => {
           if (parentObject[propName] === undefined) {
-            parentObject[propName] = null;
+            if (type === 'array') {
+              parentObject[propName] = [];
+            } else {
+              parentObject[propName] = null;
+            }
           }
 
           if (validationInfo) {
@@ -103,9 +122,10 @@ export class DataDrivenValidationCustomAttribute {
             });
           }
         });
-        rules.on(parentObject);
 
-        this.offFuncs.push(() => ValidationRules.off(parentObject));
+        this.validationController.addObject(parentObject, rules.rules);
+        console.log('this.validationController', this.validationController)
+        this.offFuncs.push(() => this.validationController.removeObject(parentObject));
       }
     } else {
       throw new Error('No validation config provided.');

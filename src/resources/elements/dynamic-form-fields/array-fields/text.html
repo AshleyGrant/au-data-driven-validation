@@ -1,0 +1,8 @@
+<template>
+  <div>
+    <label>${childDef.label & t}
+      <input type="text" value.bind="model.childObj & dynamicExpression:model.childDef.field & validate" t="[placeholder]${model.childDef.placeholder}"
+      />
+    </label>
+  </div>
+</template>

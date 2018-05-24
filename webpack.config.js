@@ -23,14 +23,14 @@ const cssRules = [
   { loader: 'css-loader' },
 ];
 
-module.exports = ({production, server, extractCss, coverage, analyze} = {}) => ({
+module.exports = ({ production, server, extractCss, coverage, analyze } = {}) => ({
   resolve: {
     extensions: ['.ts', '.js'],
     modules: [srcDir, 'node_modules'],
   },
   entry: {
     app: ['aurelia-bootstrapper'],
-    vendor: ['bluebird'],
+    vendor: ['bluebird', 'aurelia-i18n', 'aurelia-validation'],
   },
   mode: production ? 'production' : 'development',
   output: {
@@ -90,7 +90,7 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
       'Promise': 'bluebird'
     }),
     new ModuleDependenciesPlugin({
-      'aurelia-testing': [ './compile-spy', './view-spy' ]
+      'aurelia-testing': ['./compile-spy', './view-spy']
     }),
     new HtmlWebpackPlugin({
       template: 'index.ejs',
@@ -103,12 +103,15 @@ module.exports = ({production, server, extractCss, coverage, analyze} = {}) => (
         title, server, baseUrl
       }
     }),
+    new CopyWebpackPlugin([
+      {
+        from: 'static',
+        to: outDir
+      }]),
     ...when(extractCss, new ExtractTextPlugin({
       filename: production ? '[contenthash].css' : '[id].css',
       allChunks: true
     })),
-    ...when(production, new CopyWebpackPlugin([
-      { from: 'static/favicon.ico', to: 'favicon.ico' }])),
     ...when(analyze, new BundleAnalyzerPlugin())
   ]
 });

@@ -26,8 +26,7 @@ export interface FieldDefinition {
   defaultValue?: any;
   values?: FieldValueDefiniton[];
   validation?: FieldValidationDefinition;
-  // For the future
-  childFieldDefinitons?: FieldDefinition[];
+  arrayItemFieldDefinitions?: FieldDefinition[];
 }
 
 export interface FieldValidationDefinition {

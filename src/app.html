@@ -1,4 +1,7 @@
 <template>
+  <select value.bind="selectedLocale">
+    <option repeat.for="locale of locales" model.bind="locale">${locale.displayName}</option>
+  </select>
   <page-builder definition.bind="pageInfo" model.bind="model" is-valid.bind="isValid"></page-builder>
   <div>
     Page is ${ isValid ? '' : 'not' } valid.
