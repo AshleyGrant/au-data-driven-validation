@@ -110,8 +110,6 @@ export class App {
 
   async selectedLocaleChanged(newValue) {
     await this.i18n.setLocale(newValue.localeCode);
-
-    console.log('locale: ', this.i18n.getLocale())
   }
 
   resetValidation() {
@@ -120,7 +118,5 @@ export class App {
 
   validate() {
     this.validationController.validate();
-    console.log(this.model);
-    console.log(this.validationController);
   }
 }

@@ -25,8 +25,6 @@ export class DataDrivenValidationCustomAttribute {
     this.turnOffValidation();
 
     if (!this.validationConfig) {
-      console.log('this.validationConfig', this.validationConfig);
-      console.log('this.model', this.model);
       throw new Error('No validation config bound in.');
     }
 
@@ -124,7 +122,6 @@ export class DataDrivenValidationCustomAttribute {
         });
 
         this.validationController.addObject(parentObject, rules.rules);
-        console.log('this.validationController', this.validationController)
         this.offFuncs.push(() => this.validationController.removeObject(parentObject));
       }
     } else {

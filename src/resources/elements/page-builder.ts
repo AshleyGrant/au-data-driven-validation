@@ -5,15 +5,6 @@ import { ValidationRules, ValidationController, FluentRules } from 'aurelia-vali
 import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 
-// These calls are here simply to tell webpack to include these files
-// There's probably a better way to do this, but I don't care ATM
-PLATFORM.moduleName('./dynamic-form-fields/array.html');
-PLATFORM.moduleName('./dynamic-form-fields/dropdown.html');
-PLATFORM.moduleName('./dynamic-form-fields/text.html');
-PLATFORM.moduleName('./dynamic-form-fields/textarea.html');
-PLATFORM.moduleName('./dynamic-form-fields/array-fields/text.ts');
-PLATFORM.moduleName('./dynamic-form-fields/array-fields/text.html');
-
 @customElement('page-builder')
 @inject(ValidationController, Element, I18N, EventAggregator)
 export class PageBuilder {
@@ -65,15 +56,7 @@ export class PageBuilder {
     this.validationSubscription.dispose();
   }
 
-  assign(target, ...args) {
-    return Object.assign(target, ...args);
-  }
-
   addEmptyItem( array) {
     array.push({});
-  }
-
-  log(...args) {
-    console.log(...args);
   }
 }

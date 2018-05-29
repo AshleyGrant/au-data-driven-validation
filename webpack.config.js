@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const project = require('./aurelia_project/aurelia.json');
-const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
+const { AureliaPlugin, ModuleDependenciesPlugin, GlobDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { ProvidePlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -91,6 +91,10 @@ module.exports = ({ production, server, extractCss, coverage, analyze } = {}) =>
     }),
     new ModuleDependenciesPlugin({
       'aurelia-testing': ['./compile-spy', './view-spy']
+    }),
+    new GlobDependenciesPlugin({
+      "resources/elements/page-builder.html": ["src/resources/elements/dynamic-form-fields/**/*.{ts,html}"],
+      "resources/elements/dynamic-form-fields/array.html": ["src/resources/elements/dynamic-form-fields/array-fields/**/*.{ts,html}"]
     }),
     new HtmlWebpackPlugin({
       template: 'index.ejs',
