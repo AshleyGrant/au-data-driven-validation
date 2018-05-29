@@ -4,8 +4,6 @@ import { ValidationRules, ValidationController } from 'aurelia-validation';
 import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 import { I18N } from 'aurelia-i18n';
 
-
-
 @inject(NewInstance.of(ValidationController), I18N)
 export class App {
   @observable selectedLocale;
@@ -14,7 +12,7 @@ export class App {
       displayName: 'Australia',
       localeCode: 'en-AU'
     }, {
-      displayName: 'Middle Eart',
+      displayName: 'Middle Earth',
       localeCode: 'en-NZ'
     }
   ];
@@ -110,8 +108,10 @@ export class App {
     // this.buildValidation();
   }
 
-  selectedLocalChanged(newValue) {
-    this.i18n.setLocale(newValue.localeCode);
+  async selectedLocaleChanged(newValue) {
+    await this.i18n.setLocale(newValue.localeCode);
+
+    console.log('locale: ', this.i18n.getLocale())
   }
 
   resetValidation() {

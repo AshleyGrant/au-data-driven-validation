@@ -2,7 +2,7 @@
   <input type="hidden" ref="helper" model.bind="model & dynamicExpression:def.field" starter-obj.bind="{}" />
   <div>
     <label>
-      ${def.label & t}: ${helper.model.length}
+      ${def.label & t}:
 
       <button click.delegate="addEmptyItem(helper.model)">Add</button>
 
@@ -16,12 +16,12 @@
             if.bind="childObj" 
             data-driven-validation="validation-config.bind: def; model.bind: childObj"
             validation-errors.bind="itemErrors">
-          <td>${$index}</td>
           <td repeat.for="childDef of def.arrayItemFieldDefinitions">
             <compose model.bind="{ childObj, childDef }" view-model="./array-fields/${childDef.type}"></compose>
           </td>
           <td>
-            <button click.delegate="log(itemErrors)" disabled.bind="itemErrors.length !== 0">Update</button>
+            <button click.delegate="log(itemErrors)" if.bind="!itemErrors.length">Update</button>
+            <span else>There are ${itemErrors.length} errors on this thing!</span>
           </td>
         </tr>
       </table>
