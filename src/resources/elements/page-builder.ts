@@ -10,7 +10,7 @@ import { EventAggregator, Subscription } from 'aurelia-event-aggregator';
 export class PageBuilder {
   @bindable() definition: PageDefinition | FieldDefinition;
   @bindable() model: any = {};
-  public fieldDefinitions : FieldDefinition[] = [];
+  public fieldDefinitions: FieldDefinition[] = [];
   private errors: any;
   private eaSubscription: Subscription;
 
@@ -24,9 +24,13 @@ export class PageBuilder {
     private i18n: I18N,
     private ea: EventAggregator
   ) {
-    ea.subscribe('i18n:locale:changed', payload => {
-      this.i18n.updateTranslations(this.element);
-    });
+this.eaSubscription = ea.subscribe('i18n:locale:changed', payload => {
+  this.i18n.updateTranslations(this.element);
+
+  if (this.validationController.errors.length) {
+    this.validationController.validate();
+  }
+});
   }
 
   @bindable({ defaultBindingMode: bindingMode.fromView })
@@ -56,7 +60,7 @@ export class PageBuilder {
     this.validationSubscription.dispose();
   }
 
-  addEmptyItem( array) {
+  addEmptyItem(array) {
     array.push({});
   }
 }

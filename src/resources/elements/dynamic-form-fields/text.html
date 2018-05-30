@@ -1,9 +1,10 @@
 <template>
   <div>
+    <!-- Figure out id strategy -->
     <label>${def.label & t}
       <input type="text"
         value.bind="model & dynamicExpression:def.field & validate" 
-        t="[placeholder]${def.placeholder}"
+        placeholder.bind="def.placeholder & t"
       />
     </label>
   </div>

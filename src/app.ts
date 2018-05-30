@@ -1,5 +1,5 @@
 import { matchesProperty } from './resources/custom-validation-rules/matches-property';
-import { NewInstance, inject, bindable, observable } from 'aurelia-framework';
+import { NewInstance, inject, bindable, observable, PLATFORM } from 'aurelia-framework';
 import { ValidationRules, ValidationController } from 'aurelia-validation';
 import { PageDefinition } from 'resources/ts-defs/dynamic-ui';
 import { I18N } from 'aurelia-i18n';
@@ -39,7 +39,7 @@ export class App {
         field: 'names.givenName',
         label: 'givenName',
         type: 'text',
-        placeholder: 'givenNamePlaceholder',
+        placeholder: 'placeholders.givenName',
         validation: {
           required: true,
           minLength: 3,
@@ -65,40 +65,42 @@ export class App {
           }
         }]
       },
-      // {
-      //   field: 'names.superHeroName',
-      //   label: 'heroName',
-      //   type: 'text',
-      //   validation: {
-      //     minLength: 3,
-      //     maxLength: 15,
-      //     customRules: [
-      //       {
-      //         name: 'matchesProperty',
-      //         configValues: ['names.confirmSuperHeroName', 'confirmHeroName']
-      //       }
-      //     ]
-      //   }
-      // },
-      // {
-      //   field: 'names.confirmSuperHeroName',
-      //   label: 'confirmHeroName',
-      //   type: 'text',
-      //   validation: {
-      //     minLength: 3,
-      //     maxLength: 15
-      //   }
-      // },
-      // {
-      //   field: 'powers.firstPower',
-      //   type: 'text',
-      //   label: 'whatsPower',
-      //   validation: {
-      //     displayName: 'firstPower',
-      //     minLength: 5,
-      //     maxLength: 10
-      //   }
-      // },
+      {
+        field: 'names.superHeroName',
+        label: 'heroName',
+        placeholder: 'placeholders.heroName',
+        type: 'text',
+        validation: {
+          minLength: 3,
+          maxLength: 15,
+          customRules: [
+            {
+              name: 'matchesProperty',
+              configValues: ['names.confirmSuperHeroName', 'confirmHeroName']
+            }
+          ]
+        }
+      },
+      {
+        field: 'names.confirmSuperHeroName',
+        label: 'confirmHeroName',
+        placeholder: 'placeholders.confirmHeroName',
+        type: 'text',
+        validation: {
+          minLength: 3,
+          maxLength: 15
+        }
+      },
+      {
+        field: 'powers.firstPower',
+        type: 'text',
+        label: 'whatsPower',
+        validation: {
+          displayName: 'firstPower',
+          minLength: 5,
+          maxLength: 10
+        }
+      },
     ]
   };
 

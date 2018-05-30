@@ -2,9 +2,15 @@
     "avengerApplication": "Hobbit Application",
     "givenName": "Given Name",
     "heroName": "Hobbit Name",
-    "givenNamePlaceholder": "Bilbo Baggins",
     "confirmHeroMatchMessage": "Confirm Hobbit Name",
     "confirmHeroName": "Confirm Hobbit Name",
     "whatsPower": "What's your power?",
-    "firstPower": "First Power"
+    "firstPower": "First Power",
+    "errorMessages": {
+      "matchesProperty": "${$displayName} must match ${$getDisplayName($config.otherPropertyDisplayName || $config.otherPropertyName)} or you shall not pass."
+    },
+    "placeholders" : {
+      "heroName": "Gandalf",
+      "givenName": "Bilbo Baggins"
+    }
 }
